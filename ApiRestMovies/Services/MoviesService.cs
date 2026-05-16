@@ -153,24 +153,23 @@ namespace ApiRestMovies.Services
         /// Atualizar um filme existente, utilizando o repositório para acessar os dados dos filmes e aplicando a lógica de negócios necessária para
         /// validar e processar os dados do filme antes de atualizar o registro no banco de dados.
         /// </summary>
-        /// <param name="id">ID do filme a ser atualizado.</param>
         /// <param name="movie">Objeto PlataformaMovies contendo os dados atualizados do filme.</param>
         /// <returns></returns>
-        public async Task Atualizar(string id, PlataformaMovies movie)
+        public async Task Atualizar(PlataformaMovies movie)
         {
             try
             {
-                _logger.LogInformation($"Iniciando a atualização do filme com ID: {id}.");
+                _logger.LogInformation($"Iniciando a atualização do filme com ID: {movie.Id}.");
 
                 // Acessar o Firestore para atualizar um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection(_collectionName).Document(id);
+                DocumentReference documentReference = _firestoreDb.Collection(_collectionName).Document(movie.Id);
                 await documentReference.SetAsync(movie, SetOptions.Overwrite);
 
-                _logger.LogInformation($"Filme com ID: {id} atualizado com sucesso.");
+                _logger.LogInformation($"Filme com ID: {movie.Id} atualizado com sucesso.");
             }
             catch
             {
-                _logger.LogError($"Ocorreu um erro ao atualizar o filme com ID: {id}.");
+                _logger.LogError($"Ocorreu um erro ao atualizar o filme com ID: {movie.Id}.");
                 throw;
             }
         }
