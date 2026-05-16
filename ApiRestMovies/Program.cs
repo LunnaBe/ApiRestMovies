@@ -47,6 +47,8 @@ var credencial = GoogleCredential.FromFile(caminhoCredencialFirabase);
 // configurações definidas no arquivo de configuração da aplicação (appsettings.json).
 var firestoreDb = new FirestoreDbBuilder
 {
+    // As configurações de ProjectId e CredentialsPath são lidas do arquivo de configuração da aplicação (appsettings.json) para garantir que
+    // as credenciais e o ID do projeto sejam configurados corretamente.
     ProjectId = builder.Configuration["ApiConfig:ProjectId"],
     CredentialsPath = builder.Configuration["ApiConfig:CredentialsPath"]
 }.Build();
