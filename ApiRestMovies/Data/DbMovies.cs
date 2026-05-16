@@ -35,10 +35,10 @@ namespace ApiRestMovies.Data
             // Extraindo o valor do movies_id
             string moviesId = moviesIdElement.GetString()!;
 
-            // MODO DEFINITIVO: Injeção direta e explícita da credencial física
+            // Configurando o FirestoreDbBuilder com o movies_id e o caminho para as credenciais
             var builder = new FirestoreDbBuilder
             {
-                MoviesId = moviesId,
+                ProjectId = moviesId,
                 CredentialsPath = folders
             };
 
