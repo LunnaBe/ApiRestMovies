@@ -1,3 +1,4 @@
+using ApiRestMovies.Data;
 using ApiRestMovies.Models;
 using ApiRestMovies.Repositories;
 using ApiRestMovies.Repositories.Interface;
@@ -20,6 +21,8 @@ builder.Services.AddHttpClient();
 
 // Swagger + documentação XML
 builder.Services.AddEndpointsApiExplorer();
+
+// Configuração do Swagger para gerar a documentação da API, incluindo informações como versão, título e descrição da API.
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -38,34 +41,6 @@ builder.Services.AddSwaggerGen(options =>
     }
 });
 
-// Configuração do caminho para o arquivo de credenciais do Firebase, que é necessário para autenticar a aplicação e acessar o banco de dados Firestore.
-// O caminho é obtido a partir da configuração da aplicação, e se não for especificado, um valor padrão "moviesfirebase-e748b-firebase-adminsdk-fbsvc-f5aa3b9c91.json" é utilizado.
-var nomeArquivoCredencial = builder.Configuration["ApiConfig:CredentialsPath"] ?? "moviesfirebase-e748b-firebase-adminsdk-fbsvc-f5aa3b9c91.json";
-var caminhoCredencialFirebase = Path.Combine(AppContext.BaseDirectory, nomeArquivoCredencial);
-
-// Verificação se o arquivo de credenciais do Firebase existe no caminho especificado. Se o arquivo não for encontrado, uma exceção
-// FileNotFoundException é lançada, indicando que o arquivo de credenciais do Firebase não foi encontrado no caminho especificado.
-if (!File.Exists(caminhoCredencialFirebase))
-{
-    throw new FileNotFoundException($"Arquivo de credenciais do Firebase nao encontrado no caminho: {caminhoCredencialFirebase}");
-}
-
-var credential = GoogleCredential.FromFile(caminhoCredencialFirebase);
-
-var firestoreDb = new FirestoreDbBuilder
-{
-    ProjectId = builder.Configuration["ApiConfig:ProjectId"],
-    Credential = credential
-}.Build();
-
-// Adiciona o FirestoreDb como um serviço singleton no contêiner de injeção de dependência, garantindo que a mesma instância seja utilizada em toda a aplicação.
-builder.Services.AddSingleton(firestoreDb);
-
-// Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
-builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
-builder.Services.AddScoped<MoviesService>();
-
-
 // Configuração de injeção de dependência para o FirestoreDb, permitindo que ele seja utilizado pelos repositórios e serviços que precisam acessar o banco de dados.
 builder.Services.AddCors(options =>
 {
@@ -78,10 +53,17 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Configuração de injeção de dependência para a classe DbMovies, que é responsável por gerenciar a conexão com o Firestore e fornecer acesso às coleções do banco de dados.
+builder.Services.AddScoped<DbMovies>();
+
+// Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
+builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
+builder.Services.AddScoped<MoviesService>();
+
 
 var app = builder.Build();
 
-// url personalizada para acessar a documentação - http://localhost:5000/documentacao
+// url personalizada para acessar a documentação - http://localhost:7123/documentacao
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
@@ -96,6 +78,8 @@ app.UseSwaggerUI(options =>
 app.UseCors("PermitirTudo");
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
+// Rotas para a API
 app.MapControllers();
 app.MapGet("/", () => "API REST Movies Online");
 
