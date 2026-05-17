@@ -1,4 +1,5 @@
-﻿using ApiRestMovies.Models;
+﻿using ApiRestMovies.Data;
+using ApiRestMovies.Models;
 using ApiRestMovies.Repositories.Interface;
 using Google.Cloud.Firestore;
 
@@ -9,13 +10,13 @@ namespace ApiRestMovies.Repositories
         private readonly CollectionReference _collectionReference;
 
         /// <summary>
-        /// Construtor da classe MoviesRepository, que recebe a instância do FirestoreDb para inicializar a referência à coleção "movies" no Firestore.
+        /// Construtor da classe MoviesRepository, que recebe a instância do DbMovies para inicializar a referência à coleção no Firestore.
         /// </summary>
-        /// <param name="firestoreDb">A instância do FirestoreDb.</param>
-        public MoviesRepository(FirestoreDb firestoreDb) 
+        /// <param name="dbMovies">A instância do FirestoreDb.</param>
+        public MoviesRepository(DbMovies dbMovies) 
         {
             // Inicializando a referência à coleção "movies" no Firestore, que será utilizada para acessar e manipular os dados dos filmes.
-            _collectionReference = firestoreDb.Collection("movies");
+            _collectionReference = dbMovies.MoviesCollection;
         }
 
         public async Task<List<PlataformaMovies>> GetAllMoviesAsync()

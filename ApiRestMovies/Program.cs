@@ -56,14 +56,24 @@ builder.Services.AddCors(options =>
 // Configuração de injeção de dependência para a classe DbMovies, que é responsável por gerenciar a conexão com o Firestore e fornecer acesso às coleções do banco de dados.
 builder.Services.AddScoped<DbMovies>();
 
+// Configuração de injeção de dependência para o FirestoreDb.
+builder.Services.AddScoped<FirestoreDb>(provider =>
+{
+    // Obtém a instância do DbMovies do contêiner de injeção de dependência, que é responsável por gerenciar a
+    // conexão com o Firestore e fornecer acesso às coleções do banco de dados.
+    var dbMovies = provider.GetRequiredService<DbMovies>();
+    return dbMovies.Database;
+});
+
 // Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
 builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
 builder.Services.AddScoped<MoviesService>();
 
 
+
 var app = builder.Build();
 
-// url personalizada para acessar a documentação - http://localhost:7123/documentacao
+// url personalizada para acessar a documentação - http://localhost:5000/documentacao
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
