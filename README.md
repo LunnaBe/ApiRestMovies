@@ -28,8 +28,8 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 
 ### Arquitetura
 - **ASP.NET Core Web API** - Framework principal para desenvolvimento de API
-- **.NET 8.0** - Plataforma principal para o projeto API
-- **Visual Studio 2022** - IDE(Ambiente de Desenvolvimento Integrado) para criação da API
+- **SDK .NET 8.0** - Plataforma principal para o projeto API
+- **Visual Studio 2022 ou JetBrains Rider** - IDE(Ambiente de Desenvolvimento Integrado) para criação da API
 - **C#(C-Sharp)** - Linguagem utilizada na API
 - **Swagger/OpenAPI** - Documentação automática da API
 - **Injeção de Dependências** - Padrão de injeção de dependências do .NET
