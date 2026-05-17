@@ -11,7 +11,7 @@ namespace ApiRestMovies.Data
         public DbMovies()
         {
             // Caminho para o arquivo de credenciais JSON
-            var caminhoChaveWeb = "config_API/firebase-key.json";
+            var caminhoChaveWeb = "moviesfirebase.json";
             var folders = Path.Combine(AppContext.BaseDirectory, caminhoChaveWeb);
 
             // Verificando se o arquivo de credenciais existe
