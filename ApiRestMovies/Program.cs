@@ -32,21 +32,28 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-    options.IncludeXmlComments(xmlPath);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
 });
 
-// Configuração das credencias do Firebase
-var nomeArquivoCredencial = builder.Configuration["ApiConfig:CredentialsPath"];
-var caminhoCredencialFirebase = Path.Combine(Directory.GetCurrentDirectory(), nomeArquivoCredencial);
+// Configuração do caminho para o arquivo de credenciais do Firebase, que é necessário para autenticar a aplicação e acessar o banco de dados Firestore.
+// O caminho é obtido a partir da configuração da aplicação, e se não for especificado, um valor padrão "moviesfirebase-e748b-firebase-adminsdk-fbsvc-f5aa3b9c91.json" é utilizado.
+var nomeArquivoCredencial = builder.Configuration["ApiConfig:CredentialsPath"] ?? "moviesfirebase-e748b-firebase-adminsdk-fbsvc-f5aa3b9c91.json";
+var caminhoCredencialFirebase = Path.Combine(AppContext.BaseDirectory, nomeArquivoCredencial);
+
+// Verificação se o arquivo de credenciais do Firebase existe no caminho especificado. Se o arquivo não for encontrado, uma exceção
+// FileNotFoundException é lançada, indicando que o arquivo de credenciais do Firebase não foi encontrado no caminho especificado.
+if (!File.Exists(caminhoCredencialFirebase))
+{
+    throw new FileNotFoundException($"Arquivo de credenciais do Firebase nao encontrado no caminho: {caminhoCredencialFirebase}");
+}
 
 var credential = GoogleCredential.FromFile(caminhoCredencialFirebase);
 
-// Configuração do FirestoreDbBuilder para criar uma instância do FirestoreDb, utilizando as
-// configurações definidas no arquivo de configuração da aplicação (appsettings.json).
 var firestoreDb = new FirestoreDbBuilder
 {
-    // As configurações de ProjectId e CredentialsPath são lidas do arquivo de configuração da aplicação (appsettings.json) para garantir que
-    // as credenciais e o ID do projeto sejam configurados corretamente.
     ProjectId = builder.Configuration["ApiConfig:ProjectId"],
     Credential = credential
 }.Build();
@@ -76,7 +83,6 @@ var app = builder.Build();
 
 // url personalizada para acessar a documentação - http://localhost:5000/documentacao
 app.UseSwagger();
-app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
 {
     options.RoutePrefix = "documentacao";
@@ -89,5 +95,13 @@ app.UseCors("PermitirTudo");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/", () =>
+{
+    return Results.Ok(new
+    {
+        status = "online",
+        api = "ApiRestMovies"
+    });
+});
 
 app.Run();
