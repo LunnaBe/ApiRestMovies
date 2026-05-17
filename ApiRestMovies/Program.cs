@@ -36,7 +36,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Configuração das credencias do Firebase
-var caminhoCredencialFirabase = Path.Combine(Directory.GetCurrentDirectory(), "config_API/firebase-key.json");
+var caminhoCredencialFirabase = Path.Combine(Directory.GetCurrentDirectory(), "moviesfirebase.json");
 var credential = GoogleCredential.FromFile(caminhoCredencialFirabase);
 
 // Configuração do FirestoreDbBuilder para criar uma instância do FirestoreDb, utilizando as
