@@ -26,7 +26,10 @@
 ---
 
 ### Arquitetura
-- **ASP.NET Core 8.0** - Framework principal para desenvolvimento de API
+- **ASP.NET Core Web API** - Framework principal para desenvolvimento de API
+- **.NET 8.0** - Plataforma principal para o projeto API
+- **Visual Studio 2022** - IDE(Ambiente de Desenvolvimento Integrado) para criação da API
+- **C#(C-Sharp)** - Linguagem utilizada na API
 - **Swagger/OpenAPI** - Documentação automática da API
 - **Injeção de Dependências** - Padrão de injeção de dependências do .NET
 
@@ -41,3 +44,31 @@
 - **POST api/movies** - Adiciona um novo filme à coleção.
 - **PUT api/movies/{id}** - Atualiza um filme existente pelo seu ID.
 - **DELETE api/movies/{id}** - Deleta um filme existente pelo seu ID.
+
+---
+
+### Estrutura de Dados
+#### Dados - PlataformaMovies
+``` csharp
+public class PlataformaMovies
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Films { get; set; }
+    public string ShortFilms { get; set; }
+    public string TvShows { get; set; }
+    public string Url { get; set; }
+    public string ImageUrl { get; set; }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
