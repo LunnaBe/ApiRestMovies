@@ -19,10 +19,7 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="moviesfirebase-e748b-firebase-adminsdk-fbsvc-f5aa3b9c91.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="movies.db">
+		<None Update="moviesFirebaseKey.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

@@ -23,7 +23,6 @@ namespace ApiRestMovies.Services
         private readonly FirestoreDb _firestoreDb;
 
 
-
         /// <summary>
         /// Construtor da classe MoviesService, que recebe as dependências necessárias para o funcionamento do serviço, como o repositório de filmes, 
         /// o logger, a instância do FirestoreDb, o HttpClient e o nome da coleção no Firestore.

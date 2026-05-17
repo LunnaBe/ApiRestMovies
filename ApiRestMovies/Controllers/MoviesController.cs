@@ -25,7 +25,12 @@ namespace ApiRestMovies.Controllers
         }
 
 
-        // Exemplo buscando direto do FIRESTORE (Apenas para Teste de Conexão)
+        /// <summary>
+        /// GET api/movies/firestore - Obtém a lista de filmes diretamente do Firestore, utilizando a coleção "filmes" para recuperar os dados dos filmes armazenados no banco de dados.
+        /// </summary>
+        /// 
+        /// <remarks>Retorna a lista de filmes armazenados no Firestore.</remarks>
+        /// <returns></returns>
         [HttpGet("firestore")]
         public async Task<IActionResult> GetFromFirestore()
         {
@@ -35,13 +40,19 @@ namespace ApiRestMovies.Controllers
                 var filmes = snapshot.Documents.Select(d => d.ToDictionary()).ToList();
                 return Ok(filmes);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Firestore: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Firestore");
             }
         }
 
-        // Exemplo buscando direto do REALTIME DATABASE (Apenas para Teste de Conexão)
+        /// <summary>
+        /// GET api/movies/realtime - Obtém a lista de filmes diretamente do Realtime Database do Firebase, utilizando um nó chamado "filmes" 
+        /// para recuperar os dados dos filmes armazenados no banco de dados em tempo real.
+        /// </summary>
+        /// 
+        /// <remarks>Retorna a lista de filmes armazenados no Realtime Database do Firebase.</remarks>
+        /// <returns></returns>
         [HttpGet("realtime")]
         public async Task<IActionResult> GetFromRealtime()
         {
@@ -53,9 +64,9 @@ namespace ApiRestMovies.Controllers
 
                 return Ok(filmes);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Realtime: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Realtime");
             }
         }
 
@@ -78,7 +89,7 @@ namespace ApiRestMovies.Controllers
                 var movies = await _moviesService.Listar();
                 return Ok(new { mensagem = "Filmes obtidos com sucesso", dados = movies });
             }
-            catch
+            catch (Exception) 
             {
                 // Log para indicar que ocorreu um erro ao obter os filmes.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter os filmes");
@@ -112,7 +123,7 @@ namespace ApiRestMovies.Controllers
 
                 return Ok(new { mensagem = "Filme obtido com sucesso", dados = movie });
             }
-            catch
+            catch (Exception)
             {
                 // Log para indicar que ocorreu um erro ao obter o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter o filme");
@@ -148,7 +159,7 @@ namespace ApiRestMovies.Controllers
                 // Retorna um status 201 Created com a localização do novo recurso criado e os dados do filme adicionado.
                 return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, new { mensagem = "Filme adicionado com sucesso", dados = movie });
             }
-            catch
+            catch (Exception)
             {
                 // Log para indicar que ocorreu um erro ao adicionar o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar o filme");
@@ -191,7 +202,7 @@ namespace ApiRestMovies.Controllers
                 await _moviesService.Atualizar(movie);
                 return Ok(new { mensagem = "Filme atualizado com sucesso", dados = movie });
             }
-            catch
+            catch (Exception)
             {
                 // Log para indicar que ocorreu um erro ao atualizar o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar o filme");
@@ -225,7 +236,7 @@ namespace ApiRestMovies.Controllers
                 await _moviesService.Deletar(id);
                 return Ok(new { mensagem = "Filme deletado com sucesso" });
             }
-            catch
+            catch (Exception)
             {
                 // Log para indicar que ocorreu um erro ao deletar o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao deletar o filme");
