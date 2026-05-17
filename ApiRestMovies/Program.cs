@@ -83,11 +83,13 @@ var app = builder.Build();
 
 // url personalizada para acessar a documentação - http://localhost:5000/documentacao
 app.UseSwagger();
+app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
 {
     options.RoutePrefix = "documentacao";
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "API de Filmes v1");
 });
+
 
 // Configuração do middleware de CORS para permitir solicitações de qualquer origem, o que é útil durante o desenvolvimento e testes,
 // mas deve ser configurado com mais restrição em ambientes de produção para garantir a segurança da aplicação.
@@ -95,13 +97,6 @@ app.UseCors("PermitirTudo");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.MapGet("/", () =>
-{
-    return Results.Ok(new
-    {
-        status = "online",
-        api = "ApiRestMovies"
-    });
-});
+app.MapGet("/", () => "API REST Movies Online");
 
 app.Run();

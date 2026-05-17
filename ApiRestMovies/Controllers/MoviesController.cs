@@ -14,14 +14,13 @@ namespace ApiRestMovies.Controllers
         /// Construtor da classe MoviesController, que recebe a dependência do MoviesService para permitir a separação de preocupações e facilitar os testes unitários.
         /// </summary>
         /// <param name="moviesService">A instância do MoviesService.</param>
-        /// </summary>
         public MoviesController(MoviesService moviesService)
         {
             _moviesService = moviesService;
         }
 
         /// <summary>
-        /// GET api/movies - Obtém a lista de todos os filmes disponíveis, utilizando o serviço para acessar os dados dos filmes e aplicando a lógica de negócios necessária.
+        /// GET api/movies - Obtém a lista de todos os filmes disponíveis.
         /// </summary>
         /// 
         /// <remarks>Retorna a lista de filmes disponíveis.</remarks>
@@ -47,8 +46,7 @@ namespace ApiRestMovies.Controllers
         }
 
         /// <summary>
-        /// GET api/movies/{id} - Obtém um filme específico pelo seu ID, utilizando o serviço para acessar os dados do filme e aplicando a lógica de negócios necessária. 
-        /// Se o filme não for encontrado, retorna um status 404 Not Found.
+        /// GET api/movies/{id} - Obtém um filme específico pelo seu ID.
         /// </summary>
         /// 
         /// <remarks>Retorna um filme específico pelo seu ID.</remarks>
@@ -82,7 +80,7 @@ namespace ApiRestMovies.Controllers
         }
 
         /// <summary>
-        /// POST api/movies - Adiciona um novo filme à coleção, utilizando o serviço para processar a lógica de negócios necessária para criar o filme.
+        /// POST api/movies - Adiciona um novo filme à coleção.
         /// </summary>
         /// 
         /// <remarks>Adiciona um novo filme à coleção.</remarks>
@@ -119,7 +117,7 @@ namespace ApiRestMovies.Controllers
         }
 
         /// <summary>
-        /// PUT api/movies/{id} - Atualiza um filme existente pelo seu ID, utilizando o serviço para processar a lógica de negócios necessária para atualizar o filme.
+        /// PUT api/movies/{id} - Atualiza um filme existente pelo seu ID.
         /// </summary>
         /// 
         /// <remarks>Atualiza um filme existente pelo seu ID.</remarks>
@@ -161,7 +159,7 @@ namespace ApiRestMovies.Controllers
         }
 
         /// <summary>
-        /// DELETE api/movies/{id} - Deleta um filme existente pelo seu ID, utilizando o serviço para processar a lógica de negócios necessária para deletar o filme.
+        /// DELETE api/movies/{id} - Deleta um filme existente pelo seu ID.
         /// </summary>
         /// 
         /// <remarks>Deleta um filme existente pelo seu ID.</remarks>

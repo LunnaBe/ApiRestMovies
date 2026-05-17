@@ -1,6 +1,6 @@
-@ApiRestMovies_HostAddress = http://localhost:5222
+@ApiRestMovies_HostAddress = https://localhost:7123
 
-GET {{ApiRestMovies_HostAddress}}/weatherforecast/
+GET {{ApiRestMovies_HostAddress}}/api/movies
 Accept: application/json
 
 ###

@@ -22,9 +22,6 @@ namespace ApiRestMovies.Services
 
         private readonly FirestoreDb _firestoreDb;
 
-        private readonly HttpClient _httpClient;
-
-        private readonly string _collectionName = "movies";
 
 
         /// <summary>
@@ -34,15 +31,11 @@ namespace ApiRestMovies.Services
         /// <param name="moviesRepository">O repositório de filmes.</param>
         /// <param name="logger">O logger para registrar informações e erros.</param>
         /// <param name="firestoreDb">A instância do FirestoreDb para operações de banco de dados.</param>
-        /// <param name="httpClient">O HttpClient para fazer requisições HTTP.</param>
-        /// <param name="collectionName">O nome da coleção no Firestore.</param>
-        public MoviesService(IMoviesRepository moviesRepository, ILogger<MoviesService> logger, FirestoreDb firestoreDb, HttpClient httpClient, string collectionName)
+        public MoviesService(IMoviesRepository moviesRepository, ILogger<MoviesService> logger, FirestoreDb firestoreDb)
         {
             _moviesRepository = moviesRepository;
             _logger = logger;
             _firestoreDb = firestoreDb;
-            _httpClient = httpClient;
-            _collectionName = collectionName;
         }
 
         /// <summary>
@@ -54,7 +47,7 @@ namespace ApiRestMovies.Services
             try
             {
                 // Exemplo de como acessar o Firestore para obter os filmes, caso seja necessário realizar alguma operação específica no banco de dados.
-                CollectionReference collectionReference = _firestoreDb.Collection(_collectionName);
+                CollectionReference collectionReference = _firestoreDb.Collection("movies");
 
                 // Log para indicar o início da obtenção dos filmes do Firestore.
                 QuerySnapshot querySnapshot = await collectionReference.GetSnapshotAsync();
@@ -97,7 +90,7 @@ namespace ApiRestMovies.Services
                 _logger.LogInformation($"Iniciando a obtenção do filme com ID: {id}.");
 
                 // Exemplo de como acessar o Firestore para obter um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection(_collectionName).Document(id);
+                DocumentReference documentReference = _firestoreDb.Collection("movies").Document(id);
 
                 // Executa a consulta para obter o documento do Firestore com o ID especificado e verifica se ele existe.
                 DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
@@ -137,7 +130,7 @@ namespace ApiRestMovies.Services
                 _logger.LogInformation("Iniciando a criação de um novo filme.");
 
                 // Acessar o Firestore para criar um novo filme.
-                CollectionReference collectionReference = _firestoreDb.Collection(_collectionName);
+                CollectionReference collectionReference = _firestoreDb.Collection("movies");
                 await collectionReference.AddAsync(movie);
 
                 _logger.LogInformation("Filme criado com sucesso.");
@@ -162,7 +155,7 @@ namespace ApiRestMovies.Services
                 _logger.LogInformation($"Iniciando a atualização do filme com ID: {movie.Id}.");
 
                 // Acessar o Firestore para atualizar um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection(_collectionName).Document(movie.Id);
+                DocumentReference documentReference = _firestoreDb.Collection("movies").Document(movie.Id);
                 await documentReference.SetAsync(movie, SetOptions.Overwrite);
 
                 _logger.LogInformation($"Filme com ID: {movie.Id} atualizado com sucesso.");
@@ -187,7 +180,7 @@ namespace ApiRestMovies.Services
                 _logger.LogInformation($"Iniciando a exclusão do filme com ID: {id}.");
 
                 // Acessar o Firestore para excluir um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection(_collectionName).Document(id);
+                DocumentReference documentReference = _firestoreDb.Collection("movies").Document(id);
                 await documentReference.DeleteAsync();
 
                 _logger.LogInformation($"Filme com ID: {id} excluído com sucesso.");
