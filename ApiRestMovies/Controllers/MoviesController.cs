@@ -28,7 +28,6 @@ namespace ApiRestMovies.Controllers
         /// <summary>
         /// GET api/movies/firestore - Obtém a lista de filmes diretamente do Firestore.
         /// </summary>
-        /// 
         /// <remarks>Retorna a lista de filmes armazenados no Firestore.</remarks>
         /// <returns></returns>
         [HttpGet("firestore")]
