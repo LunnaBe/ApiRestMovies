@@ -36,8 +36,10 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Configuração das credencias do Firebase
-var caminhoCredencialFirabase = Path.Combine(Directory.GetCurrentDirectory(), "moviesfirebase.json");
-var credential = GoogleCredential.FromFile(caminhoCredencialFirabase);
+var nomeArquivoCredencial = builder.Configuration["ApiConfig:CredentialsPath"];
+var caminhoCredencialFirebase = Path.Combine(Directory.GetCurrentDirectory(), nomeArquivoCredencial);
+
+var credential = GoogleCredential.FromFile(caminhoCredencialFirebase);
 
 // Configuração do FirestoreDbBuilder para criar uma instância do FirestoreDb, utilizando as
 // configurações definidas no arquivo de configuração da aplicação (appsettings.json).
@@ -52,9 +54,10 @@ var firestoreDb = new FirestoreDbBuilder
 // Adiciona o FirestoreDb como um serviço singleton no contêiner de injeção de dependência, garantindo que a mesma instância seja utilizada em toda a aplicação.
 builder.Services.AddSingleton(firestoreDb);
 
-// Configuração de injeção de dependência para os serviços e repositórios, permitindo que as dependências
-builder.Services.AddSingleton<PlataformaMovies>();
+// Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
+builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
 builder.Services.AddScoped<MoviesService>();
+
 
 // Configuração de injeção de dependência para o FirestoreDb, permitindo que ele seja utilizado pelos repositórios e serviços que precisam acessar o banco de dados.
 builder.Services.AddCors(options =>
