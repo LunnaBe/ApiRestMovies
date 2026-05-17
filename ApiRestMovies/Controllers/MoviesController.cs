@@ -26,7 +26,7 @@ namespace ApiRestMovies.Controllers
 
 
         /// <summary>
-        /// GET api/movies/firestore - Obtém a lista de filmes diretamente do Firestore, utilizando a coleção "filmes" para recuperar os dados dos filmes armazenados no banco de dados.
+        /// GET api/movies/firestore - Obtém a lista de filmes diretamente do Firestore.
         /// </summary>
         /// 
         /// <remarks>Retorna a lista de filmes armazenados no Firestore.</remarks>
@@ -40,15 +40,15 @@ namespace ApiRestMovies.Controllers
                 var filmes = snapshot.Documents.Select(d => d.ToDictionary()).ToList();
                 return Ok(filmes);
             }
-            catch (Exception)
+            catch 
             {
+                // Log para indicar que ocorreu um erro ao obter os filmes do Firestore.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Firestore");
             }
         }
 
         /// <summary>
-        /// GET api/movies/realtime - Obtém a lista de filmes diretamente do Realtime Database do Firebase, utilizando um nó chamado "filmes" 
-        /// para recuperar os dados dos filmes armazenados no banco de dados em tempo real.
+        /// GET api/movies/realtime - Obtém a lista de filmes diretamente do Realtime Database do Firebase.
         /// </summary>
         /// 
         /// <remarks>Retorna a lista de filmes armazenados no Realtime Database do Firebase.</remarks>
@@ -64,8 +64,9 @@ namespace ApiRestMovies.Controllers
 
                 return Ok(filmes);
             }
-            catch (Exception)
+            catch
             {
+                // Log para indicar que ocorreu um erro ao obter os filmes do Realtime Database.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Realtime");
             }
         }
@@ -89,7 +90,7 @@ namespace ApiRestMovies.Controllers
                 var movies = await _moviesService.Listar();
                 return Ok(new { mensagem = "Filmes obtidos com sucesso", dados = movies });
             }
-            catch (Exception) 
+            catch  
             {
                 // Log para indicar que ocorreu um erro ao obter os filmes.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter os filmes");
@@ -123,7 +124,7 @@ namespace ApiRestMovies.Controllers
 
                 return Ok(new { mensagem = "Filme obtido com sucesso", dados = movie });
             }
-            catch (Exception)
+            catch 
             {
                 // Log para indicar que ocorreu um erro ao obter o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter o filme");
@@ -159,7 +160,7 @@ namespace ApiRestMovies.Controllers
                 // Retorna um status 201 Created com a localização do novo recurso criado e os dados do filme adicionado.
                 return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, new { mensagem = "Filme adicionado com sucesso", dados = movie });
             }
-            catch (Exception)
+            catch 
             {
                 // Log para indicar que ocorreu um erro ao adicionar o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar o filme");
@@ -202,7 +203,7 @@ namespace ApiRestMovies.Controllers
                 await _moviesService.Atualizar(movie);
                 return Ok(new { mensagem = "Filme atualizado com sucesso", dados = movie });
             }
-            catch (Exception)
+            catch 
             {
                 // Log para indicar que ocorreu um erro ao atualizar o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar o filme");
@@ -236,7 +237,7 @@ namespace ApiRestMovies.Controllers
                 await _moviesService.Deletar(id);
                 return Ok(new { mensagem = "Filme deletado com sucesso" });
             }
-            catch (Exception)
+            catch 
             {
                 // Log para indicar que ocorreu um erro ao deletar o filme.
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao deletar o filme");

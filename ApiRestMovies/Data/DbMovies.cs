@@ -35,19 +35,24 @@ namespace ApiRestMovies.Data
                 throw new ArgumentException("As configurações do Firebase estão incompletas. Verifique o arquivo de configuração.");
             }
 
+            // Obtém o caminho completo para o arquivo de credenciais do Firebase,
+            // combinando o diretório de execução da aplicação com o nome do arquivo de credenciais especificado na configuração.
+            var pastaExecucao = AppContext.BaseDirectory;
+            var caminhoCompletoChave = Path.Combine(pastaExecucao, credentialJson);
+
+            // Define a variável de ambiente "GOOGLE_APPLICATION_CREDENTIALS" com o caminho para o arquivo de credenciais do Firebase,
+            // garantindo que as credenciais sejam corretamente configuradas para autenticação com o Firestore.
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", caminhoCompletoChave);
+
             // Inicializa a autenticação com o arquivo de chave de serviço, criando uma instância do FirebaseApp se ainda não
             // existir, utilizando as credenciais fornecidas no arquivo JSON.
             if (FirebaseApp.DefaultInstance == null)
             {
                 FirebaseApp.Create(new AppOptions
                 {
-                    Credential = GoogleCredential.FromFile(credentialJson)
+                    Credential = GoogleCredential.FromFile(caminhoCompletoChave)
                 });
             }
-
-            // Define a variável de ambiente "GOOGLE_APPLICATION_CREDENTIALS" com o caminho para o arquivo de credenciais do Firebase,
-            // garantindo que as credenciais sejam corretamente configuradas para autenticação com o Firestore.
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialJson);
 
             // Inicializa a conexão com o Firestore usando as credenciais do arquivo JSON e o ID do projeto,
             // criando uma instância do FirestoreDb que será utilizada para acessar a base de dados Firestore.
