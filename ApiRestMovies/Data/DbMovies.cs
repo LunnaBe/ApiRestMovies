@@ -8,41 +8,14 @@ namespace ApiRestMovies.Data
         // Propriedade para acessar a base de dados Firestore
         public FirestoreDb Database { get; set; }
 
-        public DbMovies()
+        // Propriedade para acessar a coleção "filmes" no Firestore, que é onde os dados dos filmes serão armazenados e recuperados.
+        public CollectionReference MoviesCollection => Database.Collection("filmes");
+
+        // Construtor da classe DbMovies, que recebe a instância do FirestoreDb e a atribui à propriedade Database,
+        // permitindo que as coleções sejam acessadas através das propriedades MoviesCollection e UsuariosCollection.
+        public DbMovies(FirestoreDb database)
         {
-            // Caminho para o arquivo de credenciais JSON
-            var caminhoChaveWeb = "moviesfirebase.json";
-            var folders = Path.Combine(AppContext.BaseDirectory, caminhoChaveWeb);
-
-            // Verificando se o arquivo de credenciais existe
-            if (!File.Exists(folders))
-            {
-                throw new FileNotFoundException($"ERRO CRÍTICO: Arquivo não encontrado em: {folders}");
-            }
-
-            // Lendo o conteúdo do arquivo JSON para extrair o movies_id
-            string jsonString = File.ReadAllText(folders);
-
-            // Analisando o JSON para obter o movies_id
-            using JsonDocument doc = JsonDocument.Parse(jsonString);
-
-            // Verificando se a propriedade "movies_id" existe no JSON
-            if (!doc.RootElement.TryGetProperty("movies_id", out var moviesIdElement))
-            {
-                throw new Exception("O arquivo JSON é inválido. A propriedade 'movies_id' não foi encontrada.");
-            }
-
-            // Extraindo o valor do movies_id
-            string moviesId = moviesIdElement.GetString()!;
-
-            // Configurando o FirestoreDbBuilder com o movies_id e o caminho para as credenciais
-            var builder = new FirestoreDbBuilder
-            {
-                ProjectId = moviesId,
-                CredentialsPath = folders
-            };
-
-            Database = builder.Build();
+            Database = database;
         }
     }
 }
