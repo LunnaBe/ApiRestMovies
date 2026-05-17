@@ -18,7 +18,7 @@ namespace ApiRestMovies.Data
         public CollectionReference MoviesCollection => Database.Collection("filmes");
 
         // Instância única do cliente (padrão Singleton)
-        private FirebaseClient RealtimeDb { get; }
+        public FirebaseClient RealtimeDb { get; }
 
         // Construtor da classe DbMovies, que recebe a instância do FirestoreDb e a atribui à propriedade Database,
         // permitindo que as coleções sejam acessadas através das propriedades MoviesCollection e UsuariosCollection.

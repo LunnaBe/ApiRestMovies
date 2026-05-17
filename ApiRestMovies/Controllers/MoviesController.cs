@@ -1,7 +1,8 @@
-﻿using ApiRestMovies.Models;
+﻿using ApiRestMovies.Data;
+using ApiRestMovies.Models;
 using ApiRestMovies.Services;
 using Microsoft.AspNetCore.Mvc;
-
+using Firebase.Database;
 namespace ApiRestMovies.Controllers
 {
     [ApiController]
@@ -9,14 +10,53 @@ namespace ApiRestMovies.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MoviesService _moviesService;
+        private readonly DbMovies _db;
+
 
         /// <summary>
         /// Construtor da classe MoviesController, que recebe a dependência do MoviesService para permitir a separação de preocupações e facilitar os testes unitários.
         /// </summary>
         /// <param name="moviesService">A instância do MoviesService.</param>
-        public MoviesController(MoviesService moviesService)
+        /// <param name="db">A instância do DbMovies.</param>
+        public MoviesController(MoviesService moviesService, DbMovies db)
         {
             _moviesService = moviesService;
+            _db = db;
+        }
+
+
+        // Exemplo buscando direto do FIRESTORE (Apenas para Teste de Conexão)
+        [HttpGet("firestore")]
+        public async Task<IActionResult> GetFromFirestore()
+        {
+            try
+            {
+                var snapshot = await _db.MoviesCollection.GetSnapshotAsync();
+                var filmes = snapshot.Documents.Select(d => d.ToDictionary()).ToList();
+                return Ok(filmes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Firestore: {ex.Message}");
+            }
+        }
+
+        // Exemplo buscando direto do REALTIME DATABASE (Apenas para Teste de Conexão)
+        [HttpGet("realtime")]
+        public async Task<IActionResult> GetFromRealtime()
+        {
+            try
+            {
+                // Busca um nó chamado "filmes" na árvore JSON do Realtime
+                var filmes = await _db.RealtimeDb
+                    .Child("filmes").OnceAsync<object>();
+
+                return Ok(filmes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Realtime: {ex.Message}");
+            }
         }
 
         /// <summary>
