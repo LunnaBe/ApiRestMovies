@@ -3,6 +3,26 @@
 
 Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Agregador ou Gerenciador de Plataformas de Streaming e Conteúdos Digitais (como filmes, curtas-metragens e programas de TV). Utilizando o Firebase (Firestore e Realtime Database) para persistência de dados NoSQL escalável e em tempo real. A aplicação conta com documentação viva e interativa via Swagger/OpenAPI, facilitando a integração com qualquer aplicação client.
 
+---
+
+### Arquitetura
+- **ASP.NET Core Web API** - Framework principal para desenvolvimento de API
+- **SDK .NET 8.0** - Plataforma principal para o projeto API
+- **Visual Studio 2022 ou JetBrains Rider** - IDE(Ambiente de Desenvolvimento Integrado) para criação da API
+- **C#(C-Sharp)** - Linguagem utilizada na API
+- **Swagger/OpenAPI** - Documentação automática da API
+- **Injeção de Dependências** - Padrão de injeção de dependências do .NET
+
+---
+
+### Gerenciador de Pacotes NuGet
+- **FirebaseAdmin (v3.5.0)** - Gerencia a segurança e autenticação da API com os serviços do Google Cloud através de chaves privadas.
+- **FirebaseDatabase.net (v5.0.0)** - Permite a comunicação e sincronização de dados em tempo real com o Firebase Realtime Database.
+- **Google.Cloud.Firestore (v4.2.0)** - Banco de dados NoSQL principal (baseado em documentos) usado para salvar e consultar o catálogo de plataformas e filmes na nuvem.
+- **Swashbuckle.AspNetCore (v6.6.2)** - (Swagger): Gera automaticamente a documentação interativa da API, permitindo testar os endpoints direto pelo navegador.
+
+---
+
 ### Estrutura do Projeto
 
 ```
@@ -24,16 +44,6 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 │   └── appsettings.Development.json
 └── Program.cs
 ```
----
-
-### Arquitetura
-- **ASP.NET Core Web API** - Framework principal para desenvolvimento de API
-- **SDK .NET 8.0** - Plataforma principal para o projeto API
-- **Visual Studio 2022 ou JetBrains Rider** - IDE(Ambiente de Desenvolvimento Integrado) para criação da API
-- **C#(C-Sharp)** - Linguagem utilizada na API
-- **Swagger/OpenAPI** - Documentação automática da API
-- **Injeção de Dependências** - Padrão de injeção de dependências do .NET
-
 ---
 
 ### Recursos Funcionais
