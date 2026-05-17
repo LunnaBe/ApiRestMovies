@@ -18,10 +18,10 @@ namespace ApiRestMovies.Repositories
             _collectionReference = firestoreDb.Collection("movies");
         }
 
-        public Task<List<PlataformaMovies>> GetAllMoviesAsync()
+        public async Task<List<PlataformaMovies>> GetAllMoviesAsync()
         {
             // Obtendo o snapshot da coleção "movies" utilizando o método GetSnapshotAsync(), que retorna um snapshot contendo os documentos (filmes) armazenados na coleção.
-            var snapshot = _collectionReference.GetSnapshotAsync().Result;
+            var snapshot = await _collectionReference.GetSnapshotAsync();
 
             // Criando uma lista para armazenar os filmes recuperados do Firestore.
             // O método GetSnapshotAsync() retorna um snapshot da coleção, que contém os documentos (filmes) armazenados.
@@ -31,7 +31,7 @@ namespace ApiRestMovies.Repositories
                 var movie = document.ConvertTo<PlataformaMovies>();
                 movies.Add(movie);
             }
-            return Task.FromResult(movies);
+            return movies;
         }
 
         /// <summary>
@@ -41,18 +41,17 @@ namespace ApiRestMovies.Repositories
         /// </summary>
         /// <param name="id">O ID do filme a ser buscado.</param>
         /// <returns>.</returns>
-        public Task<PlataformaMovies> GetMovieByIdAsync(string id)
+        public async Task<PlataformaMovies> GetMovieByIdAsync(string id)
         {
             // Obtendo o documento do filme específico pelo ID, utilizando o método Document() para acessar o documento e GetSnapshotAsync() para obter o snapshot do documento.
-            var document = _collectionReference.Document(id).GetSnapshotAsync().Result;
+            var document = await _collectionReference.Document(id).GetSnapshotAsync();
             if (document.Exists)
             {
-                // Convertendo o snapshot do documento para um objeto do tipo PlataformaMovies utilizando o método ConvertTo<T>(),
-                // que mapeia os campos do documento para as propriedades da classe PlataformaMovies.
-                var movie = document.ConvertTo<PlataformaMovies>();
-                return Task.FromResult(movie);
+                // Se o documento existir, ele é convertido para um objeto do tipo PlataformaMovies utilizando o método ConvertTo<T>() e retornado.
+                return document.ConvertTo<PlataformaMovies>();
+                
             }
-            return Task.FromResult<PlataformaMovies>(null);
+            return null;
         }
 
         /// <summary>
@@ -83,10 +82,10 @@ namespace ApiRestMovies.Repositories
         /// </summary>
         /// <param name="movie">O objeto PlataformaMovies representando o filme a ser atualizado.</param>
         /// <returns></returns>
-        public Task UpdateMovieAsync(PlataformaMovies movie)
+        public async Task UpdateMovieAsync(PlataformaMovies movie)
         {
             var document = _collectionReference.Document(movie.Id);
-            return document.SetAsync(movie, SetOptions.Overwrite);
+            await document.SetAsync(movie, SetOptions.Overwrite);
         }
 
 
@@ -96,10 +95,10 @@ namespace ApiRestMovies.Repositories
         /// </summary>
         /// <param name="id">O ID do filme a ser deletado.</param>
         /// <returns></returns>
-        public Task DeleteMovieAsync(string id) 
+        public async Task DeleteMovieAsync(string id) 
         {
             var document = _collectionReference.Document(id);
-            return document.DeleteAsync();
+            await document.DeleteAsync();
         }
     }
 }
