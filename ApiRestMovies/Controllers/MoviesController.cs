@@ -148,12 +148,18 @@ namespace ApiRestMovies.Controllers
 
         public async Task<IActionResult> AddMovie([FromBody] PlataformaMovies movie)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (movie == null)
+            {
+                return BadRequest(new { mensagem = "Dados do filme são inválidos." });
+            }
+
             try
             {
-                if (movie == null)
-                {
-                    return BadRequest(new { mensagem = "Dados do filme são inválidos" });
-                }
                 await _moviesService.Criar(movie);
 
                 // Retorna um status 201 Created com a localização do novo recurso criado e os dados do filme adicionado.

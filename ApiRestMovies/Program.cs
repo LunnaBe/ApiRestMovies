@@ -11,6 +11,9 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string caminhoChave = Path.Combine(AppContext.BaseDirectory, "moviesFirebaseKey.json");
+Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", caminhoChave);
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -35,10 +38,8 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-    if (File.Exists(xmlPath))
-    {
-        options.IncludeXmlComments(xmlPath);
-    }
+    options.IncludeXmlComments(xmlPath);
+    
 });
 
 // Configuração de injeção de dependência para o FirestoreDb, permitindo que ele seja utilizado pelos repositórios e serviços que precisam acessar o banco de dados.
@@ -51,18 +52,6 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
-});
-
-// Configuração de injeção de dependência para a classe DbMovies, que é responsável por gerenciar a conexão com o Firestore e fornecer acesso às coleções do banco de dados.
-builder.Services.AddScoped<DbMovies>();
-
-// Configuração de injeção de dependência para o FirestoreDb.
-builder.Services.AddScoped<FirestoreDb>(provider =>
-{
-    // Obtém a instância do DbMovies do contêiner de injeção de dependência, que é responsável por gerenciar a
-    // conexão com o Firestore e fornecer acesso às coleções do banco de dados.
-    var dbMovies = provider.GetRequiredService<DbMovies>();
-    return dbMovies.Database;
 });
 
 // Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
@@ -91,6 +80,5 @@ app.UseAuthorization();
 
 // Rotas para a API
 app.MapControllers();
-app.MapGet("/", () => "API REST Movies Online");
 
 app.Run();
