@@ -6,6 +6,8 @@
 
         public string Name { get; set; }
 
+        public string Movie { get; set; }
+
         public string Films { get; set; }
 
         public string ShortFilms { get; set; }
