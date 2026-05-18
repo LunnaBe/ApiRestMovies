@@ -15,7 +15,7 @@ namespace ApiRestMovies.Controllers
         }
 
         /// <summary>
-        /// Sincroniza os dados da API para o Firebase, utilizando o serviço de filmes para realizar a operação de sincronização.
+        /// POST sincronizar - Sincroniza os dados da API para o Firebase.
         /// </summary>
         /// 
         /// <remarks>Sincroniza os dados da API para o Firebase.</remarks>

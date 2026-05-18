@@ -7,7 +7,11 @@ using Google.Cloud.Firestore;
 using Google.Protobuf.WellKnownTypes;
 using System.Net;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory 
+});
 
 // Add services to the container.
 
@@ -32,7 +36,9 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    
+
+    options.IncludeXmlComments(xmlPath);
+
 });
 
 // Configuração de injeção de dependência para o FirestoreDb, permitindo que ele seja utilizado pelos repositórios e serviços que precisam acessar o banco de dados.
