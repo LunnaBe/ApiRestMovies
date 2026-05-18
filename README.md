@@ -47,14 +47,17 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 ---
 
 ### Recursos Funcionais
+### Interface
+<img width="1890" height="872" alt="image" src="https://github.com/user-attachments/assets/a3b8905e-8d21-4837-90c3-c1fe7df81621" />
+
+
 #### CRUD
-- **GET api/movies/firestore** - Obtém a lista de filmes diretamente do Firestore.
-- **GET api/movies/realtime** - Obtém a lista de filmes diretamente do Realtime Database do Firebase.
 - **GET api/movies** - Obtém a lista de todos os filmes disponíveis.
 - **GET api/movies/{id}** - Obtém um filme específico pelo seu ID.
 - **POST api/movies** - Adiciona um novo filme à coleção.
 - **PUT api/movies/{id}** - Atualiza um filme existente pelo seu ID.
 - **DELETE api/movies/{id}** - Deleta um filme existente pelo seu ID.
+- **POST sincronizar** - Sincroniza os dados da API para o Firebase.
 
 ---
 
