@@ -12,7 +12,6 @@ namespace ApiRestMovies.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MoviesService _moviesService;
-        private readonly DbMovies _db;
 
 
 
@@ -20,58 +19,11 @@ namespace ApiRestMovies.Controllers
         /// Construtor da classe MoviesController, que recebe a dependência do MoviesService para permitir a separação de preocupações e facilitar os testes unitários.
         /// </summary>
         /// <param name="moviesService">A instância do MoviesService.</param>
-        /// <param name="db">A instância do DbMovies.</param>
-        public MoviesController(MoviesService moviesService, DbMovies db)
+        public MoviesController(MoviesService moviesService)
         {
             _moviesService = moviesService;
-            _db = db;
         }
 
-
-        /// <summary>
-        /// GET api/movies/firestore - Obtém a lista de filmes diretamente do Firestore.
-        /// </summary>
-        /// <remarks>Retorna a lista de filmes armazenados no Firestore.</remarks>
-        /// <returns></returns>
-        [HttpGet("firestore")]
-        public async Task<IActionResult> GetFromFirestore()
-        {
-            try
-            {
-                var snapshot = await _db.MoviesCollection.GetSnapshotAsync();
-                var filmes = snapshot.Documents.Select(d => d.ToDictionary()).ToList();
-                return Ok(filmes);
-            }
-            catch 
-            {
-                // Log para indicar que ocorreu um erro ao obter os filmes do Firestore.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Firestore");
-            }
-        }
-
-        /// <summary>
-        /// GET api/movies/realtime - Obtém a lista de filmes diretamente do Realtime Database do Firebase.
-        /// </summary>
-        /// 
-        /// <remarks>Retorna a lista de filmes armazenados no Realtime Database do Firebase.</remarks>
-        /// <returns></returns>
-        [HttpGet("realtime")]
-        public async Task<IActionResult> GetFromRealtime()
-        {
-            try
-            {
-                // Busca um nó chamado "filmes" na árvore JSON do Realtime
-                var filmes = await _db.RealtimeDb
-                    .Child("filmes").OnceAsync<object>();
-
-                return Ok(filmes);
-            }
-            catch
-            {
-                // Log para indicar que ocorreu um erro ao obter os filmes do Realtime Database.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro no Realtime");
-            }
-        }
 
         /// <summary>
         /// GET api/movies - Obtém a lista de todos os filmes disponíveis.
@@ -168,10 +120,12 @@ namespace ApiRestMovies.Controllers
                 // Retorna um status 201 Created com a localização do novo recurso criado e os dados do filme adicionado.
                 return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, new { mensagem = "Filme adicionado com sucesso", dados = movie });
             }
-            catch 
+            catch (Exception ex)
             {
-                // Log para indicar que ocorreu um erro ao adicionar o filme.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar o filme");
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    ex.ToString());
             }
 
         }
@@ -199,7 +153,7 @@ namespace ApiRestMovies.Controllers
             try
             {
                 // Verifica se o filme é nulo ou se o ID do filme no corpo da requisição não corresponde ao ID na URL. Se for o caso, retorna um status 400 Bad Request.
-                if (movie == null || id != movie.Id)
+                if (movie == null || id != movie.Id.ToString())
                 {
                     return BadRequest(new { mensagem = "Dados do filme são inválidos" });
                 }

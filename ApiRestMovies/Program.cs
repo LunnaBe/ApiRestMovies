@@ -1,7 +1,5 @@
 using ApiRestMovies.Data;
 using ApiRestMovies.Models;
-using ApiRestMovies.Repositories;
-using ApiRestMovies.Repositories.Interface;
 using ApiRestMovies.Services;
 using Google.Api.Gax.Grpc.Gcp;
 using Google.Apis.Auth.OAuth2;
@@ -9,10 +7,11 @@ using Google.Cloud.Firestore;
 using Google.Protobuf.WellKnownTypes;
 using System.Net;
 
-var builder = WebApplication.CreateBuilder(args);
-
-string caminhoChave = Path.Combine(AppContext.BaseDirectory, "moviesFirebaseKey.json");
-Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", caminhoChave);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory // Força o .NET a buscar os arquivos na pasta real do app
+});
 
 // Add services to the container.
 
@@ -37,8 +36,6 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-    options.IncludeXmlComments(xmlPath);
     
 });
 
@@ -54,15 +51,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddScoped<DbMovies>();
-builder.Services.AddScoped<FirestoreDb>(provider =>
-{
-    var dbMovies = provider.GetRequiredService<DbMovies>();
-    return dbMovies.Database;
-});
-
-// Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
-builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
 builder.Services.AddScoped<MoviesService>();
 
 var app = builder.Build();

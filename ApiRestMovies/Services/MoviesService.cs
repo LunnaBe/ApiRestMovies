@@ -1,7 +1,6 @@
 ﻿using ApiRestMovies.Models;
-using ApiRestMovies.Repositories.Interface;
-using Google.Cloud.Firestore;
-using Google.Cloud.Firestore.V1;
+using Firebase.Database;
+using Firebase.Database.Query;
 
 namespace ApiRestMovies.Services
 {
@@ -16,11 +15,7 @@ namespace ApiRestMovies.Services
         /// aplicando a lógica de negócios necessária antes de retornar os resultados para os controladores ou outras partes da aplicação.
         /// </summary>
 
-        private readonly IMoviesRepository _moviesRepository;
-
         private readonly ILogger<MoviesService> _logger;
-
-        private readonly FirestoreDb _firestoreDb;
 
 
         /// <summary>
@@ -30,11 +25,9 @@ namespace ApiRestMovies.Services
         /// <param name="moviesRepository">O repositório de filmes.</param>
         /// <param name="logger">O logger para registrar informações e erros.</param>
         /// <param name="firestoreDb">A instância do FirestoreDb para operações de banco de dados.</param>
-        public MoviesService(IMoviesRepository moviesRepository, ILogger<MoviesService> logger, FirestoreDb firestoreDb)
+        public MoviesService(ILogger<MoviesService> logger)
         {
-            _moviesRepository = moviesRepository;
             _logger = logger;
-            _firestoreDb = firestoreDb;
         }
 
         /// <summary>
@@ -45,33 +38,25 @@ namespace ApiRestMovies.Services
         {
             try
             {
-                // Exemplo de como acessar o Firestore para obter os filmes, caso seja necessário realizar alguma operação específica no banco de dados.
-                CollectionReference collectionReference = _firestoreDb.Collection("movies");
+                FirebaseClient firebase =
+             new FirebaseClient(
+                 "https://moviesfirebase-e748b-default-rtdb.firebaseio.com/");
 
-                // Log para indicar o início da obtenção dos filmes do Firestore.
-                QuerySnapshot querySnapshot = await collectionReference.GetSnapshotAsync();
+                var firebaseMovies = await firebase
+                    .Child("movies")
+                    .OnceAsync<PlataformaMovies>();
 
-                // Lista de objetos do tipo PlataformaMovies, que será preenchida com os dados obtidos do Firestore.
-                List<PlataformaMovies> listaMovies = new List<PlataformaMovies>();
+                List<PlataformaMovies> movies =
+                    firebaseMovies
+                        .Select(item => item.Object)
+                        .ToList();
 
-                // Percorre os documentos obtidos do Firestore e converte cada um deles para o tipo PlataformaMovies, adicionando-os à lista de filmes.
-                foreach (DocumentSnapshot document in querySnapshot.Documents)
-                {
-                    if (document.Exists)
-                    {
-                        // Converte o documento do Firestore para um objeto do tipo PlataformaMovies e adiciona à lista de filmes.
-                        PlataformaMovies movie = document.ConvertTo<PlataformaMovies>();
-                        listaMovies.Add(movie);
-                    }
-                }
+                return movies;
 
-                _logger.LogInformation("Iniciando a obtenção de todos os filmes.");
-
-                return listaMovies;
             }
-            catch 
+            catch (Exception ex)
             {
-                _logger.LogError("Ocorreu um erro ao obter os filmes.");
+                _logger.LogError(ex, "Erro ao listar filmes.");
                 throw;
             }
         }
@@ -86,33 +71,36 @@ namespace ApiRestMovies.Services
         {
             try
             {
-                _logger.LogInformation($"Iniciando a obtenção do filme com ID: {id}.");
+                _logger.LogInformation(
+                    $"Obtendo filme com ID: {id}");
 
-                // Exemplo de como acessar o Firestore para obter um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection("movies").Document(id);
+                FirebaseClient firebase =
+                    new FirebaseClient(
+                        "https://moviesfirebase-e748b-default-rtdb.firebaseio.com/");
 
-                // Executa a consulta para obter o documento do Firestore com o ID especificado e verifica se ele existe.
-                DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+                var movie = await firebase
+                    .Child("movies")
+                    .Child(id)
+                    .OnceSingleAsync<PlataformaMovies>();
 
-                if (documentSnapshot.Exists)
+                if (movie == null)
                 {
-                    // Converte o documento do Firestore para um objeto do tipo PlataformaMovies e retorna.
-                    PlataformaMovies movie = documentSnapshot.ConvertTo<PlataformaMovies>();
-                    movie.Id = documentSnapshot.Id; // Atribui o ID do documento ao objeto PlataformaMovies, caso seja necessário.
-                    return movie;
+                    _logger.LogWarning(
+                        $"Filme com ID {id} não encontrado.");
+
+                    return null;
                 }
-                else
-                {
-                    _logger.LogWarning($"Filme com ID: {id} não encontrado.");
-                    return null; // Ou lançar uma exceção personalizada, dependendo da lógica de negócios desejada.
-                }
+
+                return movie;
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.LogError($"Ocorreu um erro ao obter o filme com ID: {id}.");
+                _logger.LogError(
+                    ex,
+                    $"Erro ao obter filme com ID: {id}");
+
                 throw;
             }
-
         }
 
 
@@ -126,15 +114,19 @@ namespace ApiRestMovies.Services
         {
             try
             {
-                _logger.LogInformation("Iniciando a criação de um novo filme.");
+                FirebaseClient firebase =
+            new FirebaseClient(
+                "https://moviesfirebase-e748b-default-rtdb.firebaseio.com/");
 
-                // Acessar o Firestore para criar um novo filme.
-                CollectionReference collectionReference = _firestoreDb.Collection("movies");
-                await collectionReference.AddAsync(movie);
+                await firebase
+                    .Child("movies")
+                    .Child(movie.Id.ToString())
+                    .PutAsync(movie);
 
-                _logger.LogInformation("Filme criado com sucesso.");
+                _logger.LogInformation(
+                    "Filme salvo no Realtime Database.");
             }
-            catch
+            catch 
             {
                 _logger.LogError("Ocorreu um erro ao criar o filme.");
                 throw;
@@ -151,13 +143,16 @@ namespace ApiRestMovies.Services
         {
             try
             {
-                _logger.LogInformation($"Iniciando a atualização do filme com ID: {movie.Id}.");
+                FirebaseClient firebase =
+            new FirebaseClient(
+                "https://moviesfirebase-e748b-default-rtdb.firebaseio.com/");
 
-                // Acessar o Firestore para atualizar um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection("movies").Document(movie.Id);
-                await documentReference.SetAsync(movie, SetOptions.Overwrite);
+                await firebase
+                    .Child("movies")
+                    .Child(movie.Id.ToString())
+                    .PutAsync(movie);
 
-                _logger.LogInformation($"Filme com ID: {movie.Id} atualizado com sucesso.");
+                _logger.LogInformation("Filme atualizado.");
             }
             catch
             {
@@ -176,17 +171,64 @@ namespace ApiRestMovies.Services
         {
             try
             {
-                _logger.LogInformation($"Iniciando a exclusão do filme com ID: {id}.");
+                FirebaseClient firebase =
+             new FirebaseClient(
+                 "https://moviesfirebase-e748b-default-rtdb.firebaseio.com/");
 
-                // Acessar o Firestore para excluir um filme específico por ID.
-                DocumentReference documentReference = _firestoreDb.Collection("movies").Document(id);
-                await documentReference.DeleteAsync();
+                await firebase
+                    .Child("movies")
+                    .Child(id)
+                    .DeleteAsync();
 
-                _logger.LogInformation($"Filme com ID: {id} excluído com sucesso.");
+                _logger.LogInformation("Filme deletado.");
             }
             catch
             {
                 _logger.LogError($"Ocorreu um erro ao excluir o filme com ID: {id}.");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Sincronizar os dados dos filmes da API para o Firebase, 
+        /// utilizando o HttpClient para buscar os dados da API e o FirebaseClient para salvar os dados no Firebase.
+        /// </summary>
+        /// <returns></returns>
+        public async Task SincronizarApiParaFirebase()
+        {
+            try
+            {
+                HttpClient http = new HttpClient();
+
+                // Busca os dados da API
+                var response =
+                    await http.GetFromJsonAsync<ApiResponse>(
+                        "http://apimoviesweb.runasp.net/api/movies");
+
+                if (response == null || response.Dados == null)
+                    return;
+
+                FirebaseClient firebase =
+                    new FirebaseClient(
+                        "https://moviesfirebase-e748b-default-rtdb.firebaseio.com/");
+
+                // Salva cada filme no Firebase
+                foreach (var movie in response.Dados)
+                {
+                    await firebase
+                        .Child("movies")
+                        .Child(movie.Id.ToString())
+                        .PutAsync(movie);
+                }
+
+                _logger.LogInformation(
+                    "Sincronização concluída.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro na sincronização.");
                 throw;
             }
         }

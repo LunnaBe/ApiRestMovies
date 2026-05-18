@@ -362,5 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Chave de credenciais do Firebase
-*moviesfirebase-e748b-firebase-adminsdk-fbsvc-f5aa3b9c91*.json
+# Chaves confidenciais do Firebase
+moviesFirebaseKey.json

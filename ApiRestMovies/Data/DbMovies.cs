@@ -1,77 +1,56 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Cloud.Firestore;
-using Microsoft.AspNetCore.Builder.Extensions;
-using System.Text.Json;
-using FirebaseAdmin;
+﻿using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Firebase.Database;
-using Google.Cloud.Firestore.V1;
+using Google.Apis.Auth.OAuth2;
 
 namespace ApiRestMovies.Data
 {
     public class DbMovies
     {
-        // Propriedade para acessar a base de dados Firestore
-        public FirestoreDb Database { get; }
-
-        // Propriedade para acessar a coleção "filmes" no Firestore, que é onde os dados dos filmes serão armazenados e recuperados.
-        public CollectionReference MoviesCollection => Database.Collection("filmes");
-
-        // Instância única do cliente (padrão Singleton)
+        // Propriedade que representa a instância do FirebaseClient para acessar o Realtime Database do Firebase.
         public FirebaseClient RealtimeDb { get; }
 
-        // Construtor da classe DbMovies, que recebe a instância do FirestoreDb e a atribui à propriedade Database,
-        // permitindo que as coleções sejam acessadas através das propriedades MoviesCollection e UsuariosCollection.
+        // Construtor da classe DbMovies, que recebe a configuração do aplicativo para acessar
+        // as credenciais do Firebase e configurar a conexão com o Realtime Database.
         public DbMovies(IConfiguration configuration)
         {
-            // Inicializa a conexão com o Firestore usando as credenciais do arquivo JSON
-            var ProjectId = configuration["Firebase:ProjectId"];
-            var Credential = configuration["Firebase:CredentialFilePath"];
-            var credentialJson = configuration["Firebase:CredentialFilePath"];
+            var credentialJson =
+                configuration["Firebase:CredentialFilePath"];
 
-            // Verificação se as configurações do Firebase estão completas, lançando uma exceção caso alguma configuração esteja faltando ou seja inválida.
-            if (string.IsNullOrEmpty(ProjectId) || string.IsNullOrEmpty(Credential))
-            {
-                throw new ArgumentException("As configurações do Firebase estão incompletas. Verifique o arquivo de configuração.");
-            }
+            var pastaExecucao =
+                AppContext.BaseDirectory;
 
-            // Obtém o caminho completo para o arquivo de credenciais do Firebase,
-            // combinando o diretório de execução da aplicação com o nome do arquivo de credenciais especificado na configuração.
-            var pastaExecucao = AppContext.BaseDirectory;
-            var caminhoCompletoChave = Path.Combine(pastaExecucao, credentialJson);
+            var caminhoCompletoChave =
+                Path.Combine(
+                    pastaExecucao,
+                    credentialJson);
 
-            // Define a variável de ambiente "GOOGLE_APPLICATION_CREDENTIALS" com o caminho para o arquivo de credenciais do Firebase,
-            // garantindo que as credenciais sejam corretamente configuradas para autenticação com o Firestore.
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", caminhoCompletoChave);
-
-            // Inicializa a autenticação com o arquivo de chave de serviço, criando uma instância do FirebaseApp se ainda não
-            // existir, utilizando as credenciais fornecidas no arquivo JSON.
+            // Verifica se a instância do FirebaseApp já foi criada para evitar criar múltiplas instâncias, o que pode causar erros.
             if (FirebaseApp.DefaultInstance == null)
             {
                 FirebaseApp.Create(new AppOptions
                 {
-                    Credential = GoogleCredential.FromFile(caminhoCompletoChave)
+                    Credential =
+                        GoogleCredential.FromFile(
+                            caminhoCompletoChave)
                 });
             }
-
-            // Inicializa a conexão com o Firestore usando as credenciais do arquivo JSON e o ID do projeto,
-            // criando uma instância do FirestoreDb que será utilizada para acessar a base de dados Firestore.
-            Database = FirestoreDb.Create(ProjectId);
-
-            // Inicializa a conexão com o Realtime Database do Firebase, utilizando a URL
-            // do banco de dados e uma função assíncrona para obter o token de autenticação personalizado.
-            RealtimeDb = new FirebaseClient(configuration["Firebase:RealtimeDatabaseUrl"], new FirebaseOptions
-            {
-                AuthTokenAsyncFactory = async () =>
+            // Configura a instância do FirebaseClient para acessar o Realtime Database,
+            // utilizando as credenciais do Firebase para autenticação.
+            RealtimeDb = new FirebaseClient(
+                configuration["Firebase:RealtimeDatabaseUrl"],
+                new FirebaseOptions
                 {
-                    // Gerar um token de autenticação personalizado para o usuário "admin" utilizando o FirebaseAuth.
-                    var token = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync("admin");
-                    return token;
-                }
-            });
+                    AuthTokenAsyncFactory = async () =>
+                    {
+                        var token =
+                            await FirebaseAuth
+                                .DefaultInstance
+                                .CreateCustomTokenAsync("admin");
 
+                        return token;
+                    }
+                });
         }
-
     }
 }
-
