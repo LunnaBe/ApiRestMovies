@@ -7,11 +7,7 @@ using Google.Cloud.Firestore;
 using Google.Protobuf.WellKnownTypes;
 using System.Net;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    ContentRootPath = AppContext.BaseDirectory // Força o .NET a buscar os arquivos na pasta real do app
-});
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
