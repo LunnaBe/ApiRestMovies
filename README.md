@@ -72,6 +72,28 @@ public class PlataformaMovies
     public string ImageUrl { get; set; }
 }
 ```
+---
+
+### Dificuldades no Técnicas
+#### 1. O Conflito de Rotas no Servidor (Erro 500 / 404)
+- **Dificuldade:** Logo no início, a aplicação funcionava no seu computador, mas ao subir para a nuvem, ela dava erro 500 ou não encontrava a página. Isso acontecia porque o arquivo Program.cs tinha comandos duplicados para o Swagger (app.UseSwaggerUI()), o que confundia o servidor IIS da hospedagem.
+
+- **Resolução:** Limpamos o código do Program.cs, removemos as duplicidades e isolamos a rota do Swagger mudando o nome de /swagger para /documentacao. Isso deu um "caminho exclusivo" para a sua página de testes rodar sem travar.
+
+#### 2. A Injeção de Dependência Esquecida (Erro 500 no Banco)
+- **Dificuldade:** Em um dos momentos, o código compilava, mas ao tentar listar ou salvar os filmes, a API quebrava internamente. Descobrimos que as linhas que conectavam a Controller ao banco de dados Firestore (DbMovies e FirestoreDb) tinham sumido do Program.cs. A Controller pedia o banco, mas o projeto não sabia onde ele estava.
+
+- **Resolução:** Adicionamos novamente os serviços do Firestore (AddScoped<DbMovies>) logo após a configuração da sua chave de segurança "moviesFirebaseKey.json", fazendo a ponte voltar a funcionar.
+
+#### 3. Arquivos Travados na Memória da Hospedagem (Permission Denied / Erro 503)
+- **Dificuldade:** Quando você tentava atualizar a API na nuvem (MonsterASP), o painel mostrava um erro vermelho dizendo que você não tinha permissão para deletar a ApiRestMovies.dll. Logo em seguida, o site ficava "OFFLINE" com erro 503. Isso acontecia porque a API continuava ligada na internet, e o servidor "segurava" a DLL na memória para os usuários usarem, impedindo você de substituí-la.
+
+- **Resolução:** Entendemos o ciclo correto de deploy em servidores IIS: primeiro acessamos o painel e clicamos em STOP (para o servidor soltar a DLL), apagamos a pasta antiga, subimos os arquivos novos gerados pelo Visual Studio e só então clicamos em START.
+
+#### 4. Cache do Navegador Local (Erro 404 no Localhost)
+- **Dificuldade:** Depois que consertamos o código e você foi testar no seu computador, o navegador tentava abrir localhost:.../swagger e dava erro 404. O navegador estava acostumado com o endereço antigo e não sabia que tínhamos mudado a rota.
+
+- **Resolução:** Você aprendeu a acessar a URL correta (/documentacao) e nós fomos no arquivo de configuração interna do Visual Studio (launchSettings.json) e alteramos o launchUrl para documentacao. Agora, sempre que você aperta o botão de "Play", o projeto já abre sabendo para onde ir.
 
 
 
