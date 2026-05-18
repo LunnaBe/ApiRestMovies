@@ -66,12 +66,28 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 ``` csharp
 public class PlataformaMovies
 {
-    public string Id { get; set; }
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("name")]
     public string Name { get; set; }
-    public string Films { get; set; }
-    public string ShortFilms { get; set; }
-    public string TvShows { get; set; }
+
+    [JsonPropertyName("movie")]
+    public string Movie { get; set; }
+
+    [JsonPropertyName("films")]
+    public List<string> Films { get; set; } = new();
+
+    [JsonPropertyName("shortFilms")]
+    public List<string> ShortFilms { get; set; } = new();
+
+    [JsonPropertyName("tvShows")]
+    public List<string> TvShows { get; set; } = new();
+
+    [JsonPropertyName("url")]
     public string Url { get; set; }
+
+    [JsonPropertyName("imageUrl")]
     public string ImageUrl { get; set; }
 }
 ```
