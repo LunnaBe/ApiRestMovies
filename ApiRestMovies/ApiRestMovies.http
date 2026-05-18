@@ -1,4 +1,4 @@
-@ApiRestMovies_HostAddress = https://localhost:7123
+@ApiRestMovies_HostAddress = https://localhost:44388
 
 GET {{ApiRestMovies_HostAddress}}/api/movies
 Accept: application/json

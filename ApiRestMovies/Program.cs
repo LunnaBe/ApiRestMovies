@@ -54,17 +54,24 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddScoped<DbMovies>();
+builder.Services.AddScoped<FirestoreDb>(provider =>
+{
+    var dbMovies = provider.GetRequiredService<DbMovies>();
+    return dbMovies.Database;
+});
+
 // Configuração de injeção de dependência para os repositórios e serviços, permitindo que as dependências sejam resolvidas automaticamente pelo contêiner de injeção de dependência.
 builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
 builder.Services.AddScoped<MoviesService>();
 
-
-
 var app = builder.Build();
+
+// Força o servidor a te mostrar os erros reais caso algo dê crash
+app.UseDeveloperExceptionPage();
 
 // url personalizada para acessar a documentação - http://localhost:5000/documentacao
 app.UseSwagger();
-app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
 {
     options.RoutePrefix = "documentacao";
