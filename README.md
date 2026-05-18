@@ -47,14 +47,17 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 ---
 
 ### Recursos Funcionais
+### Interface
+<img width="1890" height="872" alt="image" src="https://github.com/user-attachments/assets/a3b8905e-8d21-4837-90c3-c1fe7df81621" />
+
+
 #### CRUD
-- **GET api/movies/firestore** - Obtém a lista de filmes diretamente do Firestore.
-- **GET api/movies/realtime** - Obtém a lista de filmes diretamente do Realtime Database do Firebase.
 - **GET api/movies** - Obtém a lista de todos os filmes disponíveis.
 - **GET api/movies/{id}** - Obtém um filme específico pelo seu ID.
 - **POST api/movies** - Adiciona um novo filme à coleção.
 - **PUT api/movies/{id}** - Atualiza um filme existente pelo seu ID.
 - **DELETE api/movies/{id}** - Deleta um filme existente pelo seu ID.
+- **POST sincronizar** - Sincroniza os dados da API para o Firebase.
 
 ---
 
@@ -63,12 +66,28 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 ``` csharp
 public class PlataformaMovies
 {
-    public string Id { get; set; }
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("name")]
     public string Name { get; set; }
-    public string Films { get; set; }
-    public string ShortFilms { get; set; }
-    public string TvShows { get; set; }
+
+    [JsonPropertyName("movie")]
+    public string Movie { get; set; }
+
+    [JsonPropertyName("films")]
+    public List<string> Films { get; set; } = new();
+
+    [JsonPropertyName("shortFilms")]
+    public List<string> ShortFilms { get; set; } = new();
+
+    [JsonPropertyName("tvShows")]
+    public List<string> TvShows { get; set; } = new();
+
+    [JsonPropertyName("url")]
     public string Url { get; set; }
+
+    [JsonPropertyName("imageUrl")]
     public string ImageUrl { get; set; }
 }
 ```
