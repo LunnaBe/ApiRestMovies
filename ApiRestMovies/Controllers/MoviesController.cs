@@ -13,15 +13,17 @@ namespace ApiRestMovies.Controllers
     {
         private readonly MoviesService _moviesService;
 
-        private readonly ILogger<MoviesController> _logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Construtor da classe MoviesController, que recebe a dependência do MoviesService para permitir a separação de preocupações e facilitar os testes unitários.
         /// </summary>
         /// <param name="moviesService">A instância do MoviesService.</param>
-        public MoviesController(MoviesService moviesService)
+        /// <param name="logger">A instância do ILogger.</param>
+        public MoviesController(MoviesService moviesService, ILogger<MoviesController> logger)
         {
             _moviesService = moviesService;
+            _logger = logger;
         }
 
 
