@@ -23,6 +23,11 @@ Web API REST moderna, cujo objetivo principal é funcionar como um Catálogo, Ag
 
 ---
 
+### Planejamento e Estimativa
+<img width="1339" height="590" alt="image" src="https://github.com/user-attachments/assets/2005a75f-5e67-4a9f-88bb-5c50a6427292" />
+
+---
+
 ### Estrutura do Projeto
 
 ```
