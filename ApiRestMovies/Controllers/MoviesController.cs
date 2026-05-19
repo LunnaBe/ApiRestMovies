@@ -13,6 +13,7 @@ namespace ApiRestMovies.Controllers
     {
         private readonly MoviesService _moviesService;
 
+        private readonly ILogger<MoviesController> _logger;
 
         /// <summary>
         /// Construtor da classe MoviesController, que recebe a dependência do MoviesService para permitir a separação de preocupações e facilitar os testes unitários.
@@ -43,10 +44,11 @@ namespace ApiRestMovies.Controllers
                 var movies = await _moviesService.Listar();
                 return Ok(new { mensagem = "Filmes obtidos com sucesso", dados = movies });
             }
-            catch  
+            catch (Exception ex)
             {
                 // Log para indicar que ocorreu um erro ao obter os filmes.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter os filmes");
+                _logger.LogError($"Erro ao obter os filmes. {ex.Message}");
+                throw new Exception("Erro ao obter os filmes.");
             }
         }
 
@@ -77,10 +79,11 @@ namespace ApiRestMovies.Controllers
 
                 return Ok(new { mensagem = "Filme obtido com sucesso", dados = movie });
             }
-            catch 
+            catch (Exception ex)
             {
                 // Log para indicar que ocorreu um erro ao obter o filme.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter o filme");
+                _logger.LogError($"Erro ao obter o filme. {ex.Message}");
+                throw new Exception("Erro ao obter o filme.");
             }
         }
 
@@ -121,10 +124,9 @@ namespace ApiRestMovies.Controllers
             }
             catch (Exception ex)
             {
-
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    ex.ToString());
+                // Log para indicar que ocorreu um erro ao adicionar o filme.
+                _logger.LogError($"Erro ao adicionar o filme. {ex.Message}");
+                throw new Exception("Erro ao adicionar o filme.");
             }
 
         }
@@ -163,10 +165,11 @@ namespace ApiRestMovies.Controllers
                 await _moviesService.Atualizar(movie);
                 return Ok(new { mensagem = "Filme atualizado com sucesso", dados = movie });
             }
-            catch 
+            catch (Exception ex)
             {
                 // Log para indicar que ocorreu um erro ao atualizar o filme.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar o filme");
+                _logger.LogError($"Erro ao atualizar o filme. {ex.Message}");
+                throw new Exception("Erro ao atualizar o filme.");
             }
         }
 
@@ -197,10 +200,11 @@ namespace ApiRestMovies.Controllers
                 await _moviesService.Deletar(id);
                 return Ok(new { mensagem = "Filme deletado com sucesso" });
             }
-            catch 
+            catch (Exception ex)
             {
                 // Log para indicar que ocorreu um erro ao deletar o filme.
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao deletar o filme");
+                _logger.LogError($"Erro ao deletar o filme. {ex.Message}");
+                throw new Exception("Erro ao deletar o filme.");
             }
         }
     }
