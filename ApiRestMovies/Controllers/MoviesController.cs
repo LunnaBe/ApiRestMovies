@@ -14,7 +14,6 @@ namespace ApiRestMovies.Controllers
         private readonly MoviesService _moviesService;
 
 
-
         /// <summary>
         /// Construtor da classe MoviesController, que recebe a dependência do MoviesService para permitir a separação de preocupações e facilitar os testes unitários.
         /// </summary>
@@ -152,7 +151,6 @@ namespace ApiRestMovies.Controllers
         {
             try
             {
-                // Verifica se o filme é nulo ou se o ID do filme no corpo da requisição não corresponde ao ID na URL. Se for o caso, retorna um status 400 Bad Request.
                 if (movie == null || id != movie.Id.ToString())
                 {
                     return BadRequest(new { mensagem = "Dados do filme são inválidos" });
