@@ -12,6 +12,7 @@ namespace ApiRestMovies.Data
 
         // Construtor da classe DbMovies, que recebe a configuração do aplicativo para acessar
         // as credenciais do Firebase e configurar a conexão com o Realtime Database.
+        [Obsolete]
         public DbMovies(IConfiguration configuration)
         {
             var credentialJson =

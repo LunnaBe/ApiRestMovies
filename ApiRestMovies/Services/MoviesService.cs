@@ -22,9 +22,7 @@ namespace ApiRestMovies.Services
         /// Construtor da classe MoviesService, que recebe as dependências necessárias para o funcionamento do serviço, como o repositório de filmes, 
         /// o logger, a instância do FirestoreDb, o HttpClient e o nome da coleção no Firestore.
         /// </summary>
-        /// <param name="moviesRepository">O repositório de filmes.</param>
         /// <param name="logger">O logger para registrar informações e erros.</param>
-        /// <param name="firestoreDb">A instância do FirestoreDb para operações de banco de dados.</param>
         public MoviesService(ILogger<MoviesService> logger)
         {
             _logger = logger;
